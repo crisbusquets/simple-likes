@@ -43,6 +43,8 @@ add_action( 'admin_init', function () {
                 'show_on_posts'    => ! empty( $input['show_on_posts'] ),
                 'show_on_pages'    => ! empty( $input['show_on_pages'] ),
                 'show_on_archives' => ! empty( $input['show_on_archives'] ),
+                'label_like'       => sanitize_text_field( $input['label_like'] ?? 'Like' ),
+                'label_liked'      => sanitize_text_field( $input['label_liked'] ?? 'Liked' ),
             ];
         },
     ]);
@@ -81,6 +83,29 @@ add_action( 'admin_init', function () {
         'simple-like-button',
         'slb_main'
     );
+
+    add_settings_field(
+        'slb_label_like',
+        __( 'Like label', 'simple-like-button' ),
+        function () {
+            $options = get_option( 'slb_options' );
+            echo '<input type="text" name="slb_options[label_like]" value="' . esc_attr( $options['label_like'] ?? 'Like' ) . '" class="regular-text">';
+        },
+        'simple-like-button',
+        'slb_main'
+    );
+
+    add_settings_field(
+        'slb_label_liked',
+        __( 'Liked label', 'simple-like-button' ),
+        function () {
+            $options = get_option( 'slb_options' );
+            echo '<input type="text" name="slb_options[label_liked]" value="' . esc_attr( $options['label_liked'] ?? 'Liked' ) . '" class="regular-text">';
+        },
+        'simple-like-button',
+        'slb_main'
+    );
+
 });
 
 // Settings tab content

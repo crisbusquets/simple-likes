@@ -60,7 +60,10 @@ function slb_render_like_button( $post_id ) {
     $disabled = in_array( $user_id, $users, true );
     $aria_disabled = $disabled ? 'aria-disabled="true"' : '';
     $icon = $disabled ? '💖' : '❤️';
-    $label = $disabled ? __( 'Liked', 'simple-like-button' ) : __( 'Like', 'simple-like-button' );
+    $options = get_option( 'slb_options', [] );
+    $label_like = $options['label_like'] ?? __( 'Like', 'simple-like-button' );
+    $label_liked = $options['label_liked'] ?? __( 'Liked', 'simple-like-button' );
+    $label = $disabled ? $label_liked : $label_like;
 
 
     ob_start(); ?>
