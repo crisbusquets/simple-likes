@@ -79,6 +79,5 @@ function slb_render_like_button( $post_id ) {
 </div>
 
 <?php
-    error_log( 'Rendered Like Button for post ID: ' . $post_id );
     return ob_get_clean();
 }
