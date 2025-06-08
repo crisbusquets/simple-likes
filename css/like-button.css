@@ -1,3 +1,9 @@
+.slb-like-wrapper {
+  margin-top: 2em;
+  padding-top: 1em;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 .slb-like-btn {
   display: inline-flex;
   align-items: center;

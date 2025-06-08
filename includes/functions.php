@@ -64,14 +64,17 @@ function slb_render_like_button( $post_id ) {
 
 
     ob_start(); ?>
-<div class="wp-block-button" data-post-id="<?php echo esc_attr( $post_id ); ?>">
-  <a href="#" role="button" class="slb-like-btn wp-block-button__link <?php echo $disabled ? 'liked' : ''; ?>"
-    <?php echo $aria_disabled; ?>>
-    <span class="like-icon"><?php echo esc_html( $icon ); ?></span>
-    <span class="like-label"><?php echo esc_html( $label ); ?></span>
-    <span class="slb-like-count"><?php echo esc_html( $count ); ?></span>
-  </a>
+<div class="slb-like-wrapper">
+  <div class="wp-block-button">
+    <a href="#" role="button" class="slb-like-btn wp-block-button__link <?php echo $disabled ? 'liked' : ''; ?>"
+      data-post-id="<?php echo esc_attr( $post_id ); ?>" <?php echo $aria_disabled; ?>>
+      <span class="like-icon"><?php echo esc_html( $icon ); ?></span>
+      <span class="like-label"><?php echo esc_html( $label ); ?></span>
+      <span class="slb-like-count"><?php echo esc_html( $count ); ?></span>
+    </a>
+  </div>
 </div>
+
 <?php
     error_log( 'Rendered Like Button for post ID: ' . $post_id );
     return ob_get_clean();
