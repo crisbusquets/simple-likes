@@ -1,0 +1,30 @@
+.slb-like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  width: auto;
+}
+
+.slb-like-btn.liked {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.slb-like-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.like-icon {
+  transition: transform 0.2s ease;
+}
+
+.slb-like-btn:hover .like-icon,
+.slb-like-btn:focus-visible .like-icon {
+  transform: scale(1.1);
+}
+
+.slb-like-count {
+  padding-left: 0.5em;
+  border-left: 1px solid currentColor;
+}
