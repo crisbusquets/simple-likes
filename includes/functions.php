@@ -42,6 +42,18 @@ add_action( 'loop_end', function ( $query ) {
     }
 });
 
+add_action( 'init', 'slb_maybe_set_anon_cookie' );
+
+function slb_maybe_set_anon_cookie() {
+	if ( is_user_logged_in() || isset( $_COOKIE['slb_anon_id'] ) ) {
+		return;
+	}
+
+	$anon_id = wp_generate_uuid4();
+	setcookie( 'slb_anon_id', $anon_id, time() + MONTH_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
+	$_COOKIE['slb_anon_id'] = $anon_id;
+}
+
 
 function slb_render_like_button( $post_id ) {
     $data  = get_post_meta( $post_id, '_simple_like_data', true );
@@ -50,10 +62,6 @@ function slb_render_like_button( $post_id ) {
 
     $user_id = get_current_user_id();
     if ( ! $user_id ) {
-        if ( ! isset( $_COOKIE['slb_anon_id'] ) ) {
-            $anon_id = wp_generate_uuid4();
-            setcookie( 'slb_anon_id', $anon_id, time() + MONTH_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
-        }
         $user_id = 'anon_' . sanitize_text_field( $_COOKIE['slb_anon_id'] ?? $anon_id ?? '' );
     }
 
