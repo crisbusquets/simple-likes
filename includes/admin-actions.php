@@ -18,7 +18,9 @@ function slb_handle_like_request() {
 
     $user_id = get_current_user_id();
     if ( ! $user_id ) {
-        $anon_id = $_COOKIE['slb_anon_id'] ?? '';
+        $anon_id = isset( $_COOKIE['slb_anon_id'] )
+            ? sanitize_text_field( wp_unslash( $_COOKIE['slb_anon_id'] ) )
+            : '';
         if ( ! $anon_id ) {
             wp_send_json_error( [ 'message' => 'Missing anonymous ID' ] );
         }

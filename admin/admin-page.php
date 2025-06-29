@@ -14,7 +14,8 @@ add_action( 'admin_menu', function () {
 
 // Render tabbed admin page
 function slb_render_admin_page() {
-    $active_tab = $_GET['tab'] ?? 'settings';
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Tab navigation does not require nonce
+    $active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'settings';
 
     echo '<div class="wrap">';
     echo '<h1>' . esc_html__( 'Simple Like Button', 'simple-like-button' ) . '</h1>';
@@ -105,7 +106,6 @@ add_action( 'admin_init', function () {
         'simple-like-button',
         'slb_main'
     );
-
 });
 
 // Settings tab content
@@ -123,22 +123,35 @@ function slb_render_settings_tab() {
 
 // Stats tab content (moved from dashboard-page.php)
 function slb_render_stats_tab() {
-    if ( isset( $_GET['slb_reset_all'] ) ) {
+    if (
+        isset( $_GET['slb_reset_all'] ) &&
+        check_admin_referer( 'slb_reset_all_likes' )
+    ) {
         slb_reset_all_likes();
+        // translators: This message is shown after resetting all Like counts.
         echo '<div class="updated"><p>' . esc_html__( 'All Likes have been reset.', 'simple-like-button' ) . '</p></div>';
     }
 
-    if ( isset( $_GET['slb_reset'] ) && isset( $_GET['post_id'] ) ) {
-        $post_id = (int) $_GET['post_id'];
+    if (
+        isset( $_GET['slb_reset'], $_GET['post_id'] ) &&
+        check_admin_referer( 'slb_reset_post_' . absint( $_GET['post_id'] ) )
+    ) {
+        $post_id = absint( $_GET['post_id'] );
         delete_post_meta( $post_id, '_simple_like_data' );
-        echo '<div class="updated"><p>' . sprintf( esc_html__( 'Likes reset for post ID %d.', 'simple-like-button' ), $post_id ) . '</p></div>';
+
+        // translators: %d is the post ID.
+        echo '<div class="updated"><p>' . sprintf(
+            // translators: This message is shown after resetting all Like counts.
+            esc_html__( 'Likes reset for post ID %d.', 'simple-like-button' ),
+            esc_html( $post_id )
+        ) . '</p></div>';
     }
 
     $query = new WP_Query([
-        'post_type' => ['post', 'page'],
+        'post_type'      => ['post', 'page'],
         'posts_per_page' => -1,
-        'fields' => 'ids',
-        'no_found_rows' => true,
+        'fields'         => 'ids',
+        'no_found_rows'  => true,
     ]);
 
     if ( ! empty( $query->posts ) ) {
@@ -150,15 +163,25 @@ function slb_render_stats_tab() {
             $count = isset( $data['count'] ) ? (int) $data['count'] : 0;
             if ( $count < 1 ) continue;
 
+            $reset_url = wp_nonce_url(
+                admin_url( 'options-general.php?page=simple-like-button&tab=stats&slb_reset=1&post_id=' . $post_id ),
+                'slb_reset_post_' . $post_id
+            );
+
             echo '<tr>';
             echo '<td><a href="' . esc_url( get_edit_post_link( $post_id ) ) . '">' . esc_html( get_the_title( $post_id ) ) . '</a></td>';
             echo '<td>' . esc_html( $count ) . '</td>';
-            echo '<td><a href="' . esc_url( admin_url( 'options-general.php?page=simple-like-button&tab=stats&slb_reset=1&post_id=' . $post_id ) ) . '" class="button">' . esc_html__( 'Reset', 'simple-like-button' ) . '</a></td>';
+            echo '<td><a href="' . esc_url( $reset_url ) . '" class="button">' . esc_html__( 'Reset', 'simple-like-button' ) . '</a></td>';
             echo '</tr>';
         }
 
+        $reset_all_url = wp_nonce_url(
+            admin_url( 'options-general.php?page=simple-like-button&tab=stats&slb_reset_all=1' ),
+            'slb_reset_all_likes'
+        );
+
         echo '</tbody></table>';
-        echo '<p><a href="' . esc_url( admin_url( 'options-general.php?page=simple-like-button&tab=stats&slb_reset_all=1' ) ) . '" class="button button-secondary">' . esc_html__( 'Reset All Likes', 'simple-like-button' ) . '</a></p>';
+        echo '<p><a href="' . esc_url( $reset_all_url ) . '" class="button button-secondary">' . esc_html__( 'Reset All Likes', 'simple-like-button' ) . '</a></p>';
     } else {
         echo '<p>' . esc_html__( 'No Likes to display yet.', 'simple-like-button' ) . '</p>';
     }
@@ -167,9 +190,9 @@ function slb_render_stats_tab() {
 // Reset helper
 function slb_reset_all_likes() {
     $posts = get_posts([
-        'post_type' => ['post', 'page'],
+        'post_type'      => ['post', 'page'],
         'posts_per_page' => -1,
-        'fields' => 'ids',
+        'fields'         => 'ids',
     ]);
 
     foreach ( $posts as $post_id ) {

@@ -1,9 +1,13 @@
 <?php
 /**
  * Plugin Name: Simple Like Button
+ * Plugin URI: https://github.com/crisbusquets/simple-likes
  * Description: Adds a lightweight "Like" button to posts and pages with AJAX functionality.
  * Version: 1.0.0
  * Author: Cris Busquets
+ * Author URI: https://cbusquets.com
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: simple-like-button
  */
 
