@@ -1,12 +1,10 @@
 # Simple Like Button
 
-> 🚧 This plugin is currently in **beta** and under active development.  
-> Expect changes. Not yet production-ready.  
-> Version: `0.9.0`
+> Version: `1.0.0`
 
 A lightweight and theme-friendly Like button for WordPress posts and pages. One like per user. AJAX-powered. No bloat.
 
-![Version](https://img.shields.io/badge/version-0.9.0--beta-yellow)
+![Version](https://img.shields.io/badge/version-1.0.0-green)
 ![License](https://img.shields.io/badge/license-GPL--2.0-blue)
 
 ---
